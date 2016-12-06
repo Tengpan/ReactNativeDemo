@@ -1,0 +1,24 @@
+
+ **********************************
+ ****** ReactNative开发环境配置 ******
+ **********************************
+
+一、安装brew
+    ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+
+二、安装node、watchman
+    1、如果之前使用pkg方式安装过nodejs可使用uninstall_nodejs.sh卸载
+    2、安装node：（卸载可使用 brew uninstall node）
+	brew install node --within-npm
+	创建链接：（移除链接：brew unlink node）
+	brew link node
+    3、安装watchman（可选）
+	brew install watchman
+
+三、安装react-native-cli
+    npm install -g react-native-cli
+
+
+    参考链接：
+	https://facebook.github.io/react-native/docs/getting-started.html
+
