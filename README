@@ -16,9 +16,21 @@
 	brew install watchman
 
 三、安装react-native-cli
+    sudo chown -R '當前用戶' /usr/local
     npm install -g react-native-cli
-
 
     参考链接：
 	https://facebook.github.io/react-native/docs/getting-started.html
 
+
+ ********************
+ ****** 运行问题 ******
+ ********************
+一、main.jsbundle缺失
+   react-native bundle --entry-file [js文件路径] --platform ios --bundle-output [main.jsbundle路径]
+
+二、jsCodeLocation路径缺失
+   方法一：使用本地main.jsbundle
+   方法二：使用本地URL：http://[本机IP]:8081/index.ios.bundle?platform=ios&dev=true
+
+   
