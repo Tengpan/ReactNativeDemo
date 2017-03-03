@@ -26,6 +26,7 @@
  ********************
  ****** 运行问题 ******
  ********************
+
 一、main.jsbundle缺失
    react-native bundle --entry-file [js文件路径] --platform ios --bundle-output [main.jsbundle路径]
 
@@ -33,4 +34,119 @@
    方法一：使用本地main.jsbundle
    方法二：使用本地URL：http://[本机IP]:8081/index.ios.bundle?platform=ios&dev=true
 
-   
+ **************************
+ ****** iOS组件自定义 ******
+ **************************
+
+   自定义组件分为界面组件和无界面组件，可参考react-native现有组件。
+
+   参考链接：
+   http://www.cocoachina.com/ios/20160510/16174.html
+
+ *************************
+ ****** 组件发布及使用 ******
+ *************************
+
+一、package.json
+
+   package.json包含了module的所有信息，比如名称、版本、描述、依赖、作者、license等。
+   使用npm init编辑package.json。与发布相关的重要设置有：name、author。
+
+二、发布到npm社区
+
+   npm set registry https://registry.npmjs.org/  /* 使用npm社区 */
+   npm adduser  /* 注册npm社区账号 等同于【 npm adduser --registry=https://registry.npmjs.org 】，npm认证信息存储路径：~/.npmrc ，*/
+   npm whoami   /* 查看npm当前registry用户 等同于【 npm whoami --registry=https://registry.npmjs.org 】*/
+   npm publish  /* 根据package.json配置发布到npm社区 */
+   npm unpublish [<@scope>/]<pkg>[@<version>] /* 撤回发布到npm社区的组件 */
+
+三、部署发布私有npm
+
+   1、部署私有npm：sinopia
+      npm install sinopia -g   /* 安装sinopia */
+      设置sinopia IP及端口：在config.yaml最后添加【 listen: 10.118.45.141:8887 】
+      sinopia  /* 启动sinopia后打印出config.yaml配置文件路径(同目录下的htpasswd文件存储已注册账号)，同时可访问 http://10.118.45.141:8887 */
+
+   2、发布私有npm
+      npm set registry http://10.118.45.141:8887/  /* 使用私有npm */
+      npm adduser  /* 注册私有npm账号 等同于【 npm adduser --registry=http://10.118.45.141:8887 】，npm认证信息存储路径：~/.npmrc ，*/
+      npm whoami   /* 查看npm当前registry用户 等同于【 npm whoami --registry=http://10.118.45.141:8887 】*/
+      npm publish  /* 根据package.json配置发布到私有npm */
+      npm unpublish [<@scope>/]<pkg>[@<version>] /* 撤回发布到npm社区的组件 */
+
+   3、权限控制
+      1）、scope设置：在组件package.json的name属性头部添加 @xxx/。（@sgs/custom_component 表示 SGS下属自定义组件）
+
+      2）、访问和发布权限控制(package.json的packages下)：
+
+         配置文件实例如下：
+         packages:
+             '@sgs/*':
+                 access: $authenticated
+                 publish:
+                     - admin
+                     - user1
+             '*':
+                 access: $all
+                 publish: $authenticated
+                 proxy: npmjs
+
+         每一个命名过滤器(filter)下都有三项基本设置：
+            access: 表示哪一类用户可以对匹配的项目进行安装(install)
+            publish: 表示哪一类用户可以对匹配的项目进行发布(publish)
+            proxy: 如其名，这里的值是对应于 uplinks 的
+
+         对于access和publish的值，我们通常有以下一些可选的配置：
+            $all 表示所有人都可以执行对应的操作
+            $authenticated 表示只有通过验证的人可以执行对应操作
+            $anonymous 表示只有匿名者可以进行对应操作（通常无用）
+            或者也可以指定对应于之前我们配置的用户表 htpasswd 中的一个或多个用户，这样就明确地指定哪些用户可以执行匹配的操作
+
+         所以，上面 packages 的配置文件可以解读为：
+            验证过的用户可以安装 @sgs 下的包
+            名为 admin 或 user1 的用户可以发布 @sgs 下的包
+            所有人都可以获取到非 @sgs 下的包
+            验证过的用户可以发布非 @sgs 下的包
+
+         sinopia -c config.yml /* 应用配置 */
+
+四、使用组件
+
+   npm install [<@scope>/]<pkg>[@<version>]          /* 安装 */
+   npm uninstall [<@scope>/]<pkg>[@<version>]        /* 卸载 */
+   react-native link [<@scope>/]<pkg>[@<version>]    /* 应用配置 */
+   react-native unlink [<@scope>/]<pkg>[@<version>]  /* 移除配置 */
+
+   参考链接：
+   https://docs.npmjs.com/files/package.json
+   http://le0zh.github.io/2016/10/19/private-npm-service-via-sinopia/
+   http://mp.weixin.qq.com/s?__biz=MzA5Nzk5MzE3Ng==&mid=401510872&idx=1&sn=5633c05b0abef3f3523f541666002ff1#rd
+   http://www.cnblogs.com/LittleSix/p/6053549.html
+
+ **************************
+ ****** 热更新环境配置 ******  （基于code-push-server 和 code-push）
+ **************************
+
+一、配置code-push-server
+
+   安装MySQL
+   npm install code-push-server -g
+
+   react-native bundle
+      --entry-file index.ios.js
+      --platform ios
+      --dev true
+      --bundle-output ./ios/bundle/index.ios.jsbundle
+      --assets-dest ./ios/bundle/assets
+
+二、问题
+
+
+   参考链接：
+   http://www.jianshu.com/p/eb7fdee307dc
+   https://github.com/lisong/code-push-server
+   https://github.com/facebook/react-native/blob/master/local-cli/bundle/bundleCommandLineArgs.js
+
+<!-- 未完待续 -->
+
+
