@@ -123,23 +123,159 @@
    http://mp.weixin.qq.com/s?__biz=MzA5Nzk5MzE3Ng==&mid=401510872&idx=1&sn=5633c05b0abef3f3523f541666002ff1#rd
    http://www.cnblogs.com/LittleSix/p/6053549.html
 
+
  **************************
- ****** 热更新环境配置 ******  （基于code-push-server 和 code-push）
+ ****** 热更新环境配置 ******
  **************************
 
-一、配置code-push-server
+一、使用微软CodePushServer
 
-   安装MySQL
-   npm install code-push-server -g
+使用CodePush之前首先要安装CodePush客户端。
 
-   react-native bundle
-      --entry-file index.ios.js
-      --platform ios
-      --dev true
-      --bundle-output ./ios/bundle/index.ios.jsbundle
-      --assets-dest ./ios/bundle/assets
+   1、安装CodePush
 
-二、问题
+      npm install -g code-push-cli
+
+   2、注册CodePush账号
+
+      执行下方命令，浏览器会自动打开注册页面进行授权，授权成功会展示"access key"，复制此key到终端即可完成注册。
+
+      code-push register
+
+      登录成功后，session文件将会写在 /Users/你的用户名/.code-push.config中，至此 CodePush客户端配置完成。
+
+      code-push login
+
+
+   涉及到的指令：
+   npm install -g code-push-cli   /* 安装CodePush客户端 */
+
+   code-push -v                   /* 查看已安装的codepush版本 */
+
+   code-push register             /* 注册codepush账号 */
+
+   code-push login                /* 登录 */
+
+   code-push loout                /* 注销 */
+
+   code-push access-key ls        /* 列出登陆的token */
+
+   code-push access-key rm <accessKye>    /* 删除某个 access-key */
+
+
+   3、在CodePush服务器注册APP（项目）
+
+      执行下方命令，让CodePush关联到需要热更新的APP。
+
+      code-push app add <appName>
+
+
+   涉及到的指令：
+   code-push app add <appName>    /* 在账号里面添加一个新的app */
+
+   code-push app rm <appName>     /* 在账号里移除一个app */
+
+   code-push app rename <appName> /* 重命名一个存在app */
+
+   code-push app ls               /* 列出账号下面的所有app */
+
+   code-push app transfer         /* 把app的所有权转移到另外一个账号 */
+
+   4、集成CodePush SDK到项目中（iOS）
+
+      在项目根目录执行下方命令
+
+         npm install --save react-native-code-push  /* 拉取react-native-code-push到node_module目录中 */
+         react-native link react-native-code-push   /* 将react-native-code-push配置到当前RN项目 */
+
+   5、项目代码中配置CodePush插件
+
+      1）配置Deployment Key（这里使用Staging环境）
+
+         执行下方命令获取 Staging key，复制 Staging 的值。在 info.plist 中添加 CodePushDeploymentKey 键，将此值填入。
+
+         code-push deployment ls <AppName> --displayKeys
+
+      2）配置CodePush入口
+
+         热更新时需要以 release 方式运行。
+
+         OC中：
+
+         #import "CodePush.h"
+
+         #ifdef DEBUG
+             jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
+         #else
+             jsCodeLocation = [CodePush bundleURL];
+         #endif
+
+         JS中父组件的 componentDidMount 方法中：
+
+         import codePush from "react-native-code-push";
+
+         componentDidMount(){
+            codePush.sync();
+         }
+
+      3）杂项配置
+
+         将 info.plist 中 Bundle versions string, short 值改成 1.0.0 格式。
+         将 项目Target->Build Version空值改为 1
+
+   6、react native 打包及发布
+
+      准备工作：将打包后的build目录手动添加到项目中   <!-- 待验证 ：？这个步骤可能只适用于 复杂方式 的打包发布-->
+
+      根据执行命令差异分为简单和复杂。
+
+      1）简单方式
+
+         使用下方自动build并发布
+
+         code-push release-react <AppName> <Platform>
+
+         例如：code-push release-react CodePushDemoApp ios
+
+      2）复杂方式：分两步执行 <!-- 待细化 -->
+
+         react-native bundle --entry-file index.ios.js --platform ios --dev true --bundle-output ./ios/bundle/index.ios.jsbundle --assets-dest ./ios/bundle/assets
+
+         code-push release TestProject-ios ./ios/bundle/ "1.0.0" --mandatory
+
+
+   参考链接：
+   http://www.jianshu.com/p/19f23d66286f
+   http://microsoft.github.io/code-push/docs/getting-started.html
+
+
+二、使用私有CodePushServer（基于code-push-server）
+
+   <!-- 实践中 -->
+
+
+   参考链接：
+   http://www.jianshu.com/p/eb7fdee307dc
+   http://www.jianshu.com/p/19f23d66286f
+
+
+
+
+
+
+   1、配置code-push-server
+
+      安装MySQL
+      npm install code-push-server -g
+
+      react-native bundle
+         --entry-file index.ios.js
+         --platform ios
+         --dev true
+         --bundle-output ./ios/bundle/index.ios.jsbundle
+         --assets-dest ./ios/bundle/assets
+
+   2、问题
 
 
    参考链接：
