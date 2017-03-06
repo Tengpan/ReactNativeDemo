@@ -225,17 +225,17 @@
 
    6、react native 打包及发布
 
-      准备工作：将打包后的build目录手动添加到项目中   <!-- 待验证 ：？这个步骤可能只适用于 复杂方式 的打包发布-->
+      准备工作：将打包后的build目录手动添加到项目中   <!-- 待验证 ：？这个步骤可能只适用于 RN专用方式 的打包发布-->
 
-      根据执行命令差异分为简单和复杂。
+      根据执行命令差异分为通用和RN专用。
 
-      1）简单方式：使用code-push-cli自动打包并发布
+      1）通用方式：使用code-push-cli自动打包并发布
 
          code-push release-react <AppName> <Platform>
 
          例如：code-push release-react CodePushDemoApp ios
 
-      2）复杂方式：打包和发布分开执行
+      2）RN专用方式：打包和发布分开执行
 
          使用react-native-cli打包。
 
@@ -410,13 +410,13 @@
 
    5、react native 打包及发布
 
-      1）简单方式   <!-- 验证未通过  -->
+      1）通用方式   <!-- 验证未通过  -->
 
          code-push release-react <AppName> <Platform>
 
          例如：code-push release-react CodePushDemoApp-ios ios
 
-      2）复杂方式
+      2）RN专用方式
 
          提前准备bundle输出目录：
 
@@ -446,7 +446,7 @@
          ...
 
          例如：
-         code-push release CodePushDemoApp-ios ./CodePush 1.0.0 --mandatory
+         code-push release CodePushDemoApp-ios ./CodePush "1.0.0" --mandatory
 
 
       参考链接：
