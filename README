@@ -229,25 +229,48 @@
 
       根据执行命令差异分为简单和复杂。
 
-      1）简单方式
-
-         使用下方自动build并发布
+      1）简单方式：使用code-push-cli自动打包并发布
 
          code-push release-react <AppName> <Platform>
 
          例如：code-push release-react CodePushDemoApp ios
 
-      2）复杂方式：分两步执行 <!-- 待细化 -->
+      2）复杂方式：打包和发布分开执行
 
-         react-native bundle --entry-file index.ios.js --platform ios --dev true --bundle-output ./ios/bundle/index.ios.jsbundle --assets-dest ./ios/bundle/assets
+         使用react-native-cli打包。
 
+         react-native bundle --entry-file    /* 入口JS文件路径 */
+                             --platform      /* 平台ios或android */
+                             --dev           /* true或false */
+                             --bundle-output /* 用于输出的bundle目录路径 */
+                             --assets-dest   /* 用于输出的assets目录路径 */
+                             ...
+
+         例如：
+         react-native bundle --entry-file index.ios.js
+                             --platform ios
+                             --dev true
+                             --bundle-output ./ios/bundle/index.ios.jsbundle
+                             --assets-dest ./ios/bundle/assets
+
+
+         使用code-push-cli发布。
+
+         code-push release <appName> <updateContents> <targetBinaryVersion>
+         [--mandatory]
+         ...
+
+         例如：
          code-push release TestProject-ios ./ios/bundle/ "1.0.0" --mandatory
 
 
-   参考链接：
-   http://www.jianshu.com/p/19f23d66286f
-   http://microsoft.github.io/code-push/docs/getting-started.html
-
+         参考链接：
+         http://www.jianshu.com/p/19f23d66286f
+         http://microsoft.github.io/code-push/docs/getting-started.html
+         react-native bundle完整命令参数：
+           https://github.com/facebook/react-native/blob/master/local-cli/bundle/bundleCommandLineArgs.js#L27
+         code-push-cli使用说明：
+           https://www.npmjs.com/package/code-push-cli
 
 二、使用私有CodePushServer（基于code-push-server）
 
