@@ -16,7 +16,7 @@
 	brew install watchman
 
 三、安装react-native-cli
-    sudo chown -R '當前用戶' /usr/local
+    sudo chown -R $USER /usr/local
     npm install -g react-native-cli
 
     参考链接：
